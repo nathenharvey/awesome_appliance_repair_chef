@@ -1,4 +1,4 @@
-# bar-cookbook
+# awesome_appliance_repair-cookbook
 
-TODO: Enter the cookbook description here.
+Installs and configures the Awesome Applicance Repair application.
 
