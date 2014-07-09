@@ -75,7 +75,23 @@ execute "pip install flask" do
 end
 
 # # Generate the apache config file in sites-enabled
-template "/etc/apache2/sites-enabled/AAR-apache.conf" do
+template "/etc/apache2/sites-available/AAR-apache.conf" do
+
+end
+
+# disable the default site
+execute "a2dissite 000-default" do
+  only_if do
+    File.symlink?("/etc/apache2/sites-enabled/000-default.conf")
+  end
+  notifies :reload, "service[apache2]"
+end
+
+# enable the AAR site
+execute "a2ensite AAR-apache" do
+  not_if do
+    File.symlink?("/etc/apache2/sites-enabled/AAR-apache.conf")
+  end
   notifies :reload, "service[apache2]"
 end
 
