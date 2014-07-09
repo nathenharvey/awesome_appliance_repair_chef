@@ -70,6 +70,9 @@ end
 
 # # pip install flask
 #     Popen(['pip', 'install', 'flask'], shell=False).wait()
+execute "pip install flask" do
+  not_if "pip show Flask | grep Flask"
+end
 
 # # Generate the apache config file in sites-enabled
 #     Popen(['apachectl', 'stop'], shell=False).wait()
