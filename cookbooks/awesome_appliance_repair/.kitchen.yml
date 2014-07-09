@@ -1,16 +1,24 @@
 ---
 driver:
-  name: vagrant
+  name: ec2
+  aws_access_key_id: <%= ENV['AWS_ACCESS_KEY_ID'] %>
+  aws_secret_access_key: <%= ENV['AWS_SECRET_ACCESS_KEY'] %>
+  aws_ssh_key_id: <%= ENV['AWS_KEYPAIR_NAME'] %>
+  availability_zone: us-east-1d
+  security_group_ids: ["sg-2ee7694b"]
+
 
 provisioner:
-  name: chef_solo
+  name: chef_zero
 
 platforms:
-  - name: ubuntu-12.04
-  - name: centos-6.4
+  - name: ubuntu-14.04
+    driver:
+      image_id: ami-018c9568
+      username: ubuntu
 
 suites:
   - name: default
     run_list:
-      - recipe[bar::default]
+      - recipe[awesome_appliance_repair::default]
     attributes:
