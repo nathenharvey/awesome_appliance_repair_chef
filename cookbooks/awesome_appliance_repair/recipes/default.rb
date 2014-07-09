@@ -8,6 +8,9 @@
 #
 
 # # The following script assumes that apache2, mysql, and unzip have been installed.
+["apache2", "mysql-server", "unzip"].each do |p|
+  package p
+end
 
 # # 1. wget https://github.com/colincam/Awesome-Appliance-Repair/archive/master.zip
 # # 2. unzip master.zip
