@@ -79,28 +79,30 @@ template "/etc/apache2/sites-enabled/AAR-apache.conf" do
   notifies :reload, "service[apache2]"
 end
 
+# TODO:  shoudl use better password and secretkey
+appdbpw = "password"
 template "/var/www/AAR/AAR_config.py" do
   variables(
-    :appdbpw => "password",
+    :appdbpw => appdbpw,
     :secretkey => "mysecretkey"
   )
 end
 
-# # Create DB, user, and permissions
-#     import MySQLdb
-#     db = MySQLdb.connect(host='localhost', user='root', passwd=root_dbpswd)
-#     sql_script = open('make_AARdb.sql', 'r').read()
-    
-#     cur = db.cursor()
-#     cur.execute(sql_script)
-#     cur.close()
-        
-#     cur = db.cursor()
-#     cur.execute('use AARdb')
-#     cur.execute("CREATE USER 'aarapp'@'localhost' IDENTIFIED BY %s", (appdbpw,))
-#     cur.execute("GRANT CREATE,INSERT,DELETE,UPDATE,SELECT on AARdb.* to aarapp@localhost")
-#     cur.close()
-#     db.close()
+execute "create db, user, and permissions" do
+  cwd "#{Chef::Config[:file_cache_path]}/Awesome-Appliance-Repair-master"
+  command "mysql -u root < make_AARdb.sql"
+  not_if "mysql -u root -e \"SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = 'AARdb'\" | grep AARdb"
+end
+
+execute "create user" do
+  command "mysql -u root -D AARdb -e \"CREATE USER 'aarapp'@'localhost' IDENTIFIED BY '#{appdbpw}'\""
+  not_if "mysql -u root -D mysql -e \"select host, user from user where host = 'localhost' and user = 'aarapp'\" | grep aarapp"
+end
+
+execute "grant access to database" do
+  command "mysql -u root -D AARdb -e \"GRANT CREATE,INSERT,DELETE,UPDATE,SELECT on AARdb.* to aarapp@localhost\""
+  not_if "mysql -u root -e \"show grants for 'aarapp'@'localhost'\" | grep GRANT | grep CREATE | grep INSERT | grep DELETE | grep UPDATE | grep SELECT"
+end
 
 # # 7. manually execute: apachectl graceful
 service "apache2" do
