@@ -27,10 +27,23 @@ execute "unzip master.zip" do
   not_if do
     File.exists? "#{Chef::Config[:file_cache_path]}/Awesome-Appliance-Repair-master/README.md"
   end
+  notifies :create, "directory[/var/www]"
+  notifies :run, "execute[mv AAR to /var/www]"
 end
 
 # # 3. cd into Awesome-Appliance-Repair
 # # 4. sudo mv AAR to /var/www/
+directory "/var/www"
+
+execute "mv AAR to /var/www" do
+  cwd "#{Chef::Config[:file_cache_path]}/Awesome-Appliance-Repair-master"
+  command "mv AAR /var/www/"
+  not_if do
+    File.exists? "/var/www/AAR/robots.txt"
+  end
+end
+
+
 # # 5. sudo su root
 # # 6. run script: python AARinstall.py
 # # 7. manually execute: apachectl graceful
