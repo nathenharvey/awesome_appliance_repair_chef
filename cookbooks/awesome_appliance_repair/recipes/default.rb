@@ -17,10 +17,18 @@ github_organization = "nathenharvey"
 
 remote_file "#{Chef::Config[:file_cache_path]}/master.zip" do
   source "https://github.com/#{github_organization}/Awesome-Appliance-Repair/archive/master.zip"
+  notifies :run, "execute[unzip master.zip]"
 end
 
-
 # # 2. unzip master.zip
+execute "unzip master.zip" do
+  command "unzip #{Chef::Config[:file_cache_path]}/master.zip"
+  cwd Chef::Config[:file_cache_path]
+  not_if do
+    File.exists? "#{Chef::Config[:file_cache_path]}/Awesome-Appliance-Repair-master/README.md"
+  end
+end
+
 # # 3. cd into Awesome-Appliance-Repair
 # # 4. sudo mv AAR to /var/www/
 # # 5. sudo su root
