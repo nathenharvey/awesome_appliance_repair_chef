@@ -75,33 +75,10 @@ execute "pip install flask" do
 end
 
 # # Generate the apache config file in sites-enabled
-#     Popen(['apachectl', 'stop'], shell=False).wait()
-    
-#     pth = '/etc/apache2/sites-enabled/'
-#     for f in os.listdir(pth):
-#         os.remove(pth + f)
-    
-#     f = open('/etc/apache2/sites-enabled/AAR-apache.conf', 'w')
-#     f.write("""
-#     <VirtualHost *:80>
-#       ServerName /
-#       WSGIDaemonProcess /AAR user=www-data group=www-data threads=5
-#       WSGIProcessGroup /AAR
-#       WSGIScriptAlias / /var/www/AAR/awesomeapp.wsgi
+template "/etc/apache2/sites-enabled/AAR-apache.conf" do
+  notifies :reload, "service[apache2]"
+end
 
-#       <Directory /var/www/AAR>
-#         WSGIApplicationGroup %{GLOBAL}
-#         WSGIScriptReloading On
-#         Order deny,allow
-#         Allow from all
-#       </Directory>
-      
-#       CustomLog ${APACHE_LOG_DIR}/access.log combined
-#       ServerAdmin ops@example.com
-#     </VirtualHost>
-#     """)
-#     f.close()
-    
 # # Generate AAR_config.py with secrets    
 #     f = open('/var/www/AAR/AAR_config.py', 'w')
 #     appdbpw = binascii.b2a_base64(os.urandom(6)).strip('\n')
@@ -135,5 +112,6 @@ end
 
 # # 7. manually execute: apachectl graceful
 service "apache2" do
-  action :restart
+  supports :reload => true
+  action :nothing
 end
