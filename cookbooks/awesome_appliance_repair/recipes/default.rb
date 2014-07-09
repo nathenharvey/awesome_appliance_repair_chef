@@ -41,17 +41,18 @@ execute "mv AAR to /var/www" do
   not_if do
     File.exists? "/var/www/AAR/robots.txt"
   end
+  notifies :run "execute[chown /var/www/AAR]"
 end
-
-
-# # 5. sudo su root
-# # 6. run script: python AARinstall.py
-
 
 # if __name__ == '__main__':
 #     root_dbpswd = getpass.getpass('enter the mysql root user password: ')
 
 #     Popen(['chown', '-R', 'www-data:www-data', '/var/www/AAR'], shell=False).wait()
+execute "chown /var/www/AAR" do
+  command "chown -R www-data:www-data /var/www/AAR"
+  action :nothing
+end
+
 
 # # apt-get the stuff we need    
 #     proc = Popen([
