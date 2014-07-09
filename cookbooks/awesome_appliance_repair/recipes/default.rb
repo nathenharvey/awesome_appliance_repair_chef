@@ -46,7 +46,7 @@ end
 
 # # 5. sudo su root
 # # 6. run script: python AARinstall.py
-# # 7. manually execute: apachectl graceful
+
 
 # if __name__ == '__main__':
 #     root_dbpswd = getpass.getpass('enter the mysql root user password: ')
@@ -122,3 +122,8 @@ end
 #     cur.execute("GRANT CREATE,INSERT,DELETE,UPDATE,SELECT on AARdb.* to aarapp@localhost")
 #     cur.close()
 #     db.close()
+
+# # 7. manually execute: apachectl graceful
+service "apache2" do
+  action :restart
+end
