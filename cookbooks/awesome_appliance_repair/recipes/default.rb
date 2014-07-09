@@ -64,6 +64,10 @@ end
 #         'python-mysqldb'], shell=False)
 #     proc.wait()
 
+['libapache2-mod-wsgi', 'python-pip', 'python-mysqldb'].each do |p|
+  package p
+end
+
 # # pip install flask
 #     Popen(['pip', 'install', 'flask'], shell=False).wait()
 
