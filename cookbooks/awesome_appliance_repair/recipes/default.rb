@@ -41,7 +41,6 @@ execute "mv AAR to /var/www" do
   not_if do
     File.exists? "/var/www/AAR/robots.txt"
   end
-  notifies :run "execute[chown /var/www/AAR]"
 end
 
 # if __name__ == '__main__':
@@ -50,7 +49,10 @@ end
 #     Popen(['chown', '-R', 'www-data:www-data', '/var/www/AAR'], shell=False).wait()
 execute "chown /var/www/AAR" do
   command "chown -R www-data:www-data /var/www/AAR"
-  action :nothing
+  only_if do
+    # check if a given file is owned by root
+    File.stat("/var/www/AAR/awesomeapp.py").uid == 0 || File.stat("/var/www/AAR/awesomeapp.py").gid == 0
+  end
 end
 
 
