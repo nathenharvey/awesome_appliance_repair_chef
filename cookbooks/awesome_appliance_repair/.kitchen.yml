@@ -16,6 +16,10 @@ platforms:
     driver:
       image_id: ami-018c9568
       username: ubuntu
+  - name: ubuntu-10.04
+  - name: ubuntu-12.04
+  - name: ubuntu-12.10
+  - name: ubuntu-13.04
 
 suites:
   - name: default
